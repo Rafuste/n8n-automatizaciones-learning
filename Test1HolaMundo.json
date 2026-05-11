@@ -1,0 +1,123 @@
+{
+  "name": "Test1HolaMundo",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "040ad460-1395-447e-ab2a-a985ee7fcb20",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "58f29b86-51db-4de0-bf14-87077b447774",
+              "name": "mi_primer_booleano",
+              "value": "={{ false }}",
+              "type": "boolean"
+            },
+            {
+              "id": "b8cad9d7-51f7-4a03-afb6-49f8cb82dbd1",
+              "name": "mi_primer_dato",
+              "value": "\"Hola mundo\"",
+              "type": "string"
+            },
+            {
+              "id": "4bfed436-5c21-4c0c-8640-e0d3eb867f4b",
+              "name": "otro_dato",
+              "value": 123,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "8849e7d6-2533-42cd-a5b5-6b9c2266e351",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "d9c2c9e3-3e36-4d94-a27c-8c531bca0d44",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6d8550cd-95bc-4ffc-bbbc-5558c5e1011b",
+      "name": "Wait",
+      "webhookId": "eae72d57-daf6-40ab-ad3a-ed70c6c393c6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "389136b9-b99d-4c33-8d53-a6f340623e57",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "eHLjfJ6l2HUbyYcP",
+  "tags": []
+}
