@@ -1,0 +1,159 @@
+{
+  "name": "Test4 -SET para Array Datos y Mensajes (Array y String)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        176
+      ],
+      "id": "048837ca-73fb-4cdb-b630-9214f5fe0456",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b0b4c5f-9441-4f0c-a19e-f7b779a17ad2",
+              "name": "personas",
+              "value": "=[ {\"nombre\": \"Ana\", \"edad\": 25}, {\"nombre\": \"Luis\", \"edad\": 32}, {\"nombre\": \"Elena\", \"edad\": 16} ]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        176
+      ],
+      "id": "d330fc08-d002-46f8-b036-5d1741814ea8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1458698-d34b-4345-a756-f0d8e4d441f8",
+              "name": "Mensajes",
+              "value": "={{ $json.personas.map(p => p.edad >= 18 ? \"Acceso Permitido a \" + p.nombre : \"Acceso no Permitido a \" + p.nombre).join(\"\\n\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "6c34d642-d4fd-4cc5-a3df-261fbdfad34e",
+      "name": "SET: Crea 1 String con todos los datos del Array"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ca3484e-4fa0-4933-b616-c901ef6997db",
+              "name": "MEnsajes",
+              "value": "={{ $json.personas.map(p=>p.edad>=18?\"AccesoPermitido a \" + p.nombre:\"Acceso no Permitido a \" + p.nombre)}}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        272
+      ],
+      "id": "bddd4182-76e4-4640-a26c-ea406c442b08",
+      "name": "SET: Crea 1 Array con un mensaje para cada persona del array"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        688,
+        176
+      ],
+      "id": "3d65c15b-e08c-46f6-b0b9-ab12fbaf579e",
+      "name": "No Operation, do nothing1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "SET: Crea 1 String con todos los datos del Array",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "SET: Crea 1 Array con un mensaje para cada persona del array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET: Crea 1 String con todos los datos del Array": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SET: Crea 1 Array con un mensaje para cada persona del array": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4db3691a-365a-41c3-9da2-963e1e6b4c8f",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "wzYDufkjqcYE9v8N",
+  "tags": []
+}
