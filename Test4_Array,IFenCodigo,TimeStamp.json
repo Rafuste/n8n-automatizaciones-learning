@@ -1,0 +1,150 @@
+{
+  "name": "Test4_Array,IFenCodigo,TimeStamp",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        48
+      ],
+      "id": "20229791-9a14-4b49-a48e-d9a9bb30174d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd7d9b38-f5ab-4fb2-9330-ec98ea4fdc59",
+              "name": "Personas",
+              "value": "=[ {\"nombre\": \"Ana\", \"edad\": 16}, {\"nombre\": \"Luis\", \"edad\": 32}, {\"nombre\": \"Elena\", \"edad\": 19} ]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        48
+      ],
+      "id": "8f891fef-fae6-4725-9326-71f0bb9c19c0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const personas = $input.first().json.Personas;\nconst resultados = personas.map((p) => ({\n  nombre: p.nombre,\n  edad: p.edad,\n  mensaje: `${p.nombre} tiene ${p.edad} años. ${p.edad >= 18 ? \"Acceso Permitido\" : \"Acceso no Permitido\"}`,\n}));\n\nreturn resultados.map((resultado) => ({ json: resultado }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        48
+      ],
+      "id": "8d1bd0a2-a6d3-4a50-a5c3-c83a974aceaa",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        832,
+        48
+      ],
+      "id": "26cb1c2a-9f68-4bc6-ada8-bad70a46a732",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f9787a0-47b5-4e9c-8fa8-1a587c6d9d3a",
+              "name": "timestamp",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "28b5c284-abc3-4c9e-9136-46952a64260e",
+              "name": "mensaje",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        64
+      ],
+      "id": "a80165a4-e874-4be0-97fb-fa6c4306d9a6",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e1a211fb-de48-4931-8b81-bcd7148aa47a",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "HT6FYcz83MrUJeux",
+  "tags": []
+}
