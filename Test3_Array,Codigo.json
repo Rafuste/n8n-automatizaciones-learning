@@ -1,0 +1,115 @@
+{
+  "name": "Test3_Array,Codigo",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6422fad3-48bf-4afc-acdc-fd4eef9fec74",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ffe5ff8d-fb7b-431f-97ac-4aa508241866",
+              "name": "personas",
+              "value": "=[ {\"nombre\": \"Ana\", \"edad\": 25}, {\"nombre\": \"Luis\", \"edad\": 32}, {\"nombre\": \"Elena\", \"edad\": 19} ]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8da14b45-75fc-43d2-827d-a980ef8f8c46",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const personas = $input.first().json.personas;\nconst resultados = [];\nfor (const p of personas) {\n  resultados.push({\n    nombre: p.nombre,\n    edad: p.edad,\n    mensaje: `${p.nombre} tiene ${p.edad} años.`\n  });\n}\nreturn resultados;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        16
+      ],
+      "id": "aecfb330-3fce-4124-a5fe-eb9ea91ddbe4",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        624,
+        16
+      ],
+      "id": "bfc9dfb0-30f6-4410-8a79-9a0fc0d9e378",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8388b247-0064-46ca-b28b-850ea6e4c9ba",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "WheUPt8LJlearFDU",
+  "tags": []
+}
