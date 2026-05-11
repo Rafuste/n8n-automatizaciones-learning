@@ -1,0 +1,385 @@
+{
+  "name": "Test 6_Array, Split & Aggregate + diferentes formas de filtrar y presentar",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        624
+      ],
+      "id": "4b6b107c-e3a3-4079-8b57-99cdfb085b33",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "personas",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "nombre, edad",
+        "options": {}
+      },
+      "id": "69a15f01-1a6e-42ef-96c1-d4bfb78a8766",
+      "name": "Split Array Items",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        624
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4cea467c-d98b-4624-9e17-be75dc085f20",
+      "name": "Show Names",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        896,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "resultados",
+        "options": {}
+      },
+      "id": "87537d49-1401-44a3-b5d5-3ad6ea37f771",
+      "name": "Aggregate Final",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        896,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "filter-edad",
+              "leftValue": "={{ $json.personas.edad }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              },
+              "rightValue": 18
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2cd61075-721e-4231-90f3-1ce8569ddd5e",
+      "name": "Filter Adults",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4bce73d3-fca7-4947-a662-bb3aa7bbdc71",
+              "name": "personas",
+              "value": "=[ {\"nombre\": \"Ana\", \"edad\": 25}, {\"nombre\": \"Luis\", \"edad\": 32}, {\"nombre\": \"Elena\", \"edad\": 16}, {\"nombre\": \"Paula\", \"edad\": 18}, {\"nombre\": \"Eduardo\", \"edad\": 101}, {\"nombre\": \"Marcos\", \"edad\": 0} ]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        624
+      ],
+      "id": "4a794879-a86c-4a30-a815-e85494506589",
+      "name": "Create Array Personas (Nombre,Edad)"
+    },
+    {
+      "parameters": {},
+      "id": "b78911ef-be81-42c0-a089-d3b08ef6279b",
+      "name": "Show Names1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        912,
+        720
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "c50c4212-473f-49aa-a5c0-af9e3b00fac2",
+      "name": "Show Names2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "msg-id",
+              "name": "mensaje",
+              "value": "={{ $json.personas.nombre }} es {{ $json.personas.edad >= 18 ? \"mayor\" : \"menor\" }} de edad",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "af22437e-4696-45f7-a89c-9a6cfeb2dc15",
+      "name": "Create Message Mayoria Edad",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "nombre-id",
+              "name": "Nombre",
+              "value": "={{ $json.personas.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "edad-id",
+              "name": "Edad",
+              "value": "={{ $json.personas.edad }}",
+              "type": "number"
+            },
+            {
+              "id": "mayoria-id",
+              "name": "Mayoria de edad",
+              "value": "={{ $json.personas.edad >= 18 }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7d4d6be0-4a6c-47b5-978d-97844c86f7ef",
+      "name": "Crear Items Nombre,Edad,MayoriaEdad",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b6f3ab99-3b6a-41fc-829d-a1dcf8b4e2d2",
+              "name": "Nombres",
+              "value": "={{ $json.personas.edad >= 18 ? $json.personas.nombre : null }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        720
+      ],
+      "id": "99865cd0-1534-4753-961b-a4531a8915b3",
+      "name": "Create Name>18 o Null"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b6f3ab99-3b6a-41fc-829d-a1dcf8b4e2d2",
+              "name": "Nombres",
+              "value": "={{ $json.personas.nombre }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        912
+      ],
+      "id": "32fed539-f82e-43c8-8ade-d2172b0c7e82",
+      "name": "Create Only Adults"
+    },
+    {
+      "parameters": {},
+      "id": "78441e93-b4b2-42ef-bbe1-8a834f528c2d",
+      "name": "Show Names3",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        528
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create Array Personas (Nombre,Edad)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Array Items": {
+      "main": [
+        [
+          {
+            "node": "Create Name>18 o Null",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Crear Items Nombre,Edad,MayoriaEdad",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Message Mayoria Edad",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter Adults",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Show Names": {
+      "main": [
+        []
+      ]
+    },
+    "Filter Adults": {
+      "main": [
+        [
+          {
+            "node": "Create Only Adults",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Array Personas (Nombre,Edad)": {
+      "main": [
+        [
+          {
+            "node": "Split Array Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Message Mayoria Edad": {
+      "main": [
+        [
+          {
+            "node": "Show Names",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Items Nombre,Edad,MayoriaEdad": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Name>18 o Null": {
+      "main": [
+        [
+          {
+            "node": "Show Names1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Only Adults": {
+      "main": [
+        [
+          {
+            "node": "Show Names2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Final": {
+      "main": [
+        [
+          {
+            "node": "Show Names3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "60cfe5cc-38c9-48d0-b376-6538dd6e4b0c",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "omDpDRMP3vWdeAeh",
+  "tags": []
+}
