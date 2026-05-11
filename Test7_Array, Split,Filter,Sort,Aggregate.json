@@ -1,0 +1,257 @@
+{
+  "name": "Test7_Array, Split,Filter,Sort,Aggregate",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        624
+      ],
+      "id": "400d97e5-fc96-451e-9b98-6c1ef882e691",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4bce73d3-fca7-4947-a662-bb3aa7bbdc71",
+              "name": "personas",
+              "value": "=[ {\"nombre\": \"Ana\", \"edad\": 25, \"ciudad\":\"Madrid\"}, {\"nombre\": \"Luis\", \"edad\": 32, \"ciudad\":\"Valparaiso\"}, {\"nombre\": \"Elena\", \"edad\": 16, \"ciudad\":\"Madrid\"}, {\"nombre\": \"Paula\", \"edad\": 30, \"ciudad\":\"Valparaiso\"}, {\"nombre\": \"Eduardo\", \"edad\": 101, \"ciudad\":\"Stalingrado\"}, {\"nombre\": \"Marcos\", \"edad\": 30, \"ciudad\":\"La Habana\"} ]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        624
+      ],
+      "id": "521d2228-3935-4efa-88ba-5eb3bb38e85f",
+      "name": "Create Array Personas (Nombre,Edad)"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "personas",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        624
+      ],
+      "id": "a9ab4a7c-3da7-4f15-9674-01d8ae8f544d",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8f2f0b5a-1a8d-417f-bd14-90e21c5923b7",
+              "leftValue": "={{ $json.ciudad }}",
+              "rightValue": "=Madrid",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "60f016eb-5250-4569-9e23-d02f7f8605fd",
+              "leftValue": "={{ $json.edad }}",
+              "rightValue": 30,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        624
+      ],
+      "id": "4c5bc3d0-ea82-4d2e-909f-4693b2cd3dbf",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "edad",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        896,
+        624
+      ],
+      "id": "b6259007-edc2-4b64-afef-7aadce20d30c",
+      "name": "Sort"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9568d344-f1da-4980-9c13-c9db031a6e29",
+              "name": "resumen",
+              "value": "={{ $json[\"Datos_filtrados\"].map(item => item.nombre + \" tiene \" + item.edad + \" años y vive en \" + item.ciudad).join(\"; \") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        624
+      ],
+      "id": "79c4c360-e9ab-4895-8776-62200006fc68",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        624
+      ],
+      "id": "9df0b16d-93b7-4159-a211-f567a227aa92",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "Datos_filtrados",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        624
+      ],
+      "id": "c2333e05-24f5-4f95-8342-4ad581e6c731",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create Array Personas (Nombre,Edad)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Array Personas (Nombre,Edad)": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f213817d-a054-48bd-bf08-d4bafe9af6c7",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "Z8R0DP8AsC1SUYfN",
+  "tags": []
+}
