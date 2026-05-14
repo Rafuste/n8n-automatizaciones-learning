@@ -1,0 +1,649 @@
+{
+  "name": "Test9_UploadExcel,Extract,Edit,CreateXLSX",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "archivo",
+        "options": {}
+      },
+      "id": "46f45f0d-7f57-4293-ae03-52fe8aeea91e",
+      "name": "Extract from XLSX",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Subir Archivo Excel",
+        "formDescription": "Por favor, sube tu archivo de reporte de ventas en formato Excel (.xlsx)",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Archivo Excel",
+              "fieldType": "file",
+              "fieldName": "archivo",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx,.xls",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cbf027a0-5eac-46a9-bfe9-568b75bfd15d",
+      "name": "Upload File Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        240,
+        304
+      ],
+      "webhookId": "b75268f7-0cc8-49fe-ae35-2bff54cd7c0a"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        48
+      ],
+      "id": "38c9fe9b-4042-431c-bf51-fe6a0acf2e35",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        304
+      ],
+      "id": "96c8d482-113d-4435-a49f-433b0eea178f",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        720
+      ],
+      "id": "9ecdd720-1288-4915-957b-5b80ac4f1961",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        480
+      ],
+      "id": "3467630f-4dd2-4935-866f-4ae9b03972fb",
+      "name": "No Operation, do nothing3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d3ab5436-f425-49a1-9861-46d2d1757ca1",
+              "name": "Región",
+              "value": "={{ $json['Región'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6d4819af-25c3-4d3f-868f-e38f9a4f7484",
+              "name": "Total_Ventas",
+              "value": "={{ $json.Unidades * $json['Precio Unitario (€)'] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        304
+      ],
+      "id": "8fe4d83f-c9ae-4b0f-acd9-f1fa2f1e8699",
+      "name": "Crear Total_ventas (1)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d3ab5436-f425-49a1-9861-46d2d1757ca1",
+              "name": "Región",
+              "value": "={{ $json['Región'] }}",
+              "type": "string"
+            },
+            {
+              "id": "05c62de8-b60e-47be-8dc3-8f4087d936f4",
+              "name": "Vendedor",
+              "value": "={{ $json.Vendedor }}",
+              "type": "string"
+            },
+            {
+              "id": "97b380c6-f2e1-4079-8f6d-9ece8b459115",
+              "name": "Producto",
+              "value": "={{ $json.Producto }}",
+              "type": "string"
+            },
+            {
+              "id": "88d91347-2971-459a-a818-4855608af55e",
+              "name": "Fecha",
+              "value": "={{ $json.Fecha }}",
+              "type": "number"
+            },
+            {
+              "id": "9927852c-4739-4a47-96a8-1164467bc1bd",
+              "name": "Unidades",
+              "value": "={{ $json.Unidades }}",
+              "type": "number"
+            },
+            {
+              "id": "948f63f4-02b5-4cc7-9d5a-9bfe86838e37",
+              "name": "Precio Unitario (€)",
+              "value": "={{ $json['Precio Unitario (€)'] }}",
+              "type": "number"
+            },
+            {
+              "id": "6d4819af-25c3-4d3f-868f-e38f9a4f7484",
+              "name": "Total_Ventas",
+              "value": "={{ $json.Unidades * $json['Precio Unitario (€)'] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        592
+      ],
+      "id": "a49b3cd2-5049-4e73-9de1-e184d8b44dfa",
+      "name": "Crear Total_ventas (2)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d3ab5436-f425-49a1-9861-46d2d1757ca1",
+              "name": "Región",
+              "value": "={{ $json['Región'] }}",
+              "type": "string"
+            },
+            {
+              "id": "05c62de8-b60e-47be-8dc3-8f4087d936f4",
+              "name": "Vendedor",
+              "value": "={{ $json.Vendedor }}",
+              "type": "string"
+            },
+            {
+              "id": "97b380c6-f2e1-4079-8f6d-9ece8b459115",
+              "name": "Producto",
+              "value": "={{ $json.Producto }}",
+              "type": "string"
+            },
+            {
+              "id": "88d91347-2971-459a-a818-4855608af55e",
+              "name": "Fecha",
+              "value": "={{ $json.Fecha }}",
+              "type": "number"
+            },
+            {
+              "id": "9927852c-4739-4a47-96a8-1164467bc1bd",
+              "name": "Unidades",
+              "value": "={{ $json.Unidades }}",
+              "type": "number"
+            },
+            {
+              "id": "948f63f4-02b5-4cc7-9d5a-9bfe86838e37",
+              "name": "Precio Unitario (€)",
+              "value": "={{ $json['Precio Unitario (€)'] }}",
+              "type": "number"
+            },
+            {
+              "id": "6d4819af-25c3-4d3f-868f-e38f9a4f7484",
+              "name": "Total_Ventas",
+              "value": "={{ $json.Unidades * $json['Precio Unitario (€)'] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        48
+      ],
+      "id": "9326ddfd-9e32-44b8-a818-db1e8a534bd3",
+      "name": "Crear Total_ventas"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "322444c7-7ca2-4aac-bb1c-c29dccafa4ef",
+              "leftValue": "={{ $json['Vendedor'] }}",
+              "rightValue": "Ana",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        592
+      ],
+      "id": "5c1a3ac4-8aa5-450b-8d43-d38f79eb5bbb",
+      "name": "Filtro (Vend.=Ana)"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Unidades }}",
+                    "rightValue": 5,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "fa2b4c38-c6a7-497e-a86a-d2e415d43938"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SUPER_VENTA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3c6fae5a-c371-41cc-995e-52f0cce838f6",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "VENTA NORMAL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        592
+      ],
+      "id": "01e5204f-b793-4c0e-90f7-263b0cab7f83",
+      "name": "Switch super ventas"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "fileName": "Super_Ventas_de_Ana"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        480
+      ],
+      "id": "41fed642-0429-4d3f-a7c1-2d110d4e6524",
+      "name": "Excel Super_Ventas_de_Ana"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "fileName": "Total_Ventas_Región"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        304
+      ],
+      "id": "c2deaff6-50e6-43c2-96d0-c70dfd470f10",
+      "name": "Excel Total_Ventas_Region"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "fileName": "Ventas_Norte"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        48
+      ],
+      "id": "f41a3c97-b7b2-4e63-ae3c-9772cfaa0f8a",
+      "name": "Excel Ventas_norte"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "322444c7-7ca2-4aac-bb1c-c29dccafa4ef",
+              "leftValue": "={{ $json['Región'] }}",
+              "rightValue": "Norte",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        48
+      ],
+      "id": "c1967078-8386-4f7c-be19-0f4083145eea",
+      "name": "Filtro (Region=Norte)"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Total_Ventas"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Región",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        304
+      ],
+      "id": "5b32f112-63b9-4e53-9fff-390a18fa7144",
+      "name": "Sum por región"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d8e53eb-e4d8-4822-b931-9c230dbe5096",
+              "name": "Región",
+              "value": "={{ $json['Región'] }}",
+              "type": "string"
+            },
+            {
+              "id": "dda92893-c1ae-406b-a870-dc9fc41deb02",
+              "name": "Total_Ventas_por_Region(€)",
+              "value": "={{ $json.sum_Total_Ventas }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        304
+      ],
+      "id": "43687234-5b48-4bc2-9293-e30d5299a7b0",
+      "name": "Ordenar Columna"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Upload File Form": {
+      "main": [
+        [
+          {
+            "node": "Extract from XLSX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from XLSX": {
+      "main": [
+        [
+          {
+            "node": "Crear Total_ventas (1)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Crear Total_ventas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Crear Total_ventas (2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Excel Ventas_norte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Excel Total_Ventas_Region",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing3": {
+      "main": [
+        [
+          {
+            "node": "Excel Super_Ventas_de_Ana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Total_ventas (1)": {
+      "main": [
+        [
+          {
+            "node": "Sum por región",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Total_ventas (2)": {
+      "main": [
+        [
+          {
+            "node": "Filtro (Vend.=Ana)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Total_ventas": {
+      "main": [
+        [
+          {
+            "node": "Filtro (Region=Norte)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro (Vend.=Ana)": {
+      "main": [
+        [
+          {
+            "node": "Switch super ventas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch super ventas": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Excel Ventas_norte": {
+      "main": [
+        []
+      ]
+    },
+    "Filtro (Region=Norte)": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sum por región": {
+      "main": [
+        [
+          {
+            "node": "Ordenar Columna",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ordenar Columna": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b87ec200-a57e-4af8-a0ce-c6b738f7342a",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "RJWnmyOZsBiZO5rl",
+  "tags": []
+}
