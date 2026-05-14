@@ -1,0 +1,262 @@
+{
+  "name": "Test8_Split, Switch, Merge",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6527778a-5c0e-49f5-b97f-eb66c89eab32",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f74906f-1757-42ae-ad04-2d3d22a4d2f2",
+              "name": "Transacciones",
+              "value": "=[{\"concepto\": \"Nómina\", \"importe\": 2200, \"fecha\": \"2025-05-01\"},   {\"concepto\": \"Supermercado\", \"importe\": 85, \"fecha\": \"2025-05-02\"},   {\"concepto\": \"Supermercado\", \"importe\": 92, \"fecha\": \"2025-05-02\"},   {\"concepto\": \"Alquiler\", \"importe\": 800, \"fecha\": \"2025-05-01\"},   {\"concepto\": \"Transferencia\", \"importe\": 1500, \"fecha\": \"2025-05-03\"},   {\"concepto\": \"Restaurante\", \"importe\": 45, \"fecha\": \"2025-05-03\"},   {\"concepto\": \"Restaurante\", \"importe\": 50, \"fecha\": \"2025-05-03\"},   {\"concepto\": \"Restaurante EScamas\", \"importe\": 58, \"fecha\": \"2025-06-03\"},   {\"concepto\": \"Compra Droga\", \"importe\": -50, \"fecha\": \"2025-05-03\"},   {\"concepto\": \"Esto es un Scam\", \"importe\": 500, \"fecha\": \"2025-05-03\"},   {\"concepto\": \"Venta Droga\", \"importe\": 5000, \"fecha\": \"2025-05-03\"}]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "50641804-5956-44f4-8e79-7e7ddac4774e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "Transacciones",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "ad402a22-8ebd-4320-b679-dad882ae763a",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.importe }}",
+                    "rightValue": 1000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "afe42396-c002-469d-a92a-33c5e8a4097c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ALERTA_TransaccionGrande"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "38913e36-ae83-4ee5-9acd-12e043541a76",
+                    "leftValue": "={{ $json.importe }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ALERTA_TransacciónNegativa"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1ea5710e-1d71-4ddd-9f78-416fcc439a74",
+                    "leftValue": "={{ $json.concepto }}",
+                    "rightValue": "Scam",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ALERTA_Scam"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -16
+      ],
+      "id": "b13abfeb-634f-4fe2-a4f5-b557984f52fa",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        800,
+        -176
+      ],
+      "id": "65b4cf18-6377-412f-aa47-5a4bad789891",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        -176
+      ],
+      "id": "e45d0639-6f95-4685-b04c-280aba4d69bc",
+      "name": "ALERTA_Grandes y negativos"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        976,
+        160
+      ],
+      "id": "723ea0ce-bc04-4a70-9d88-eeafc07e0c63",
+      "name": "Alerta Scam"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Alerta Scam",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "ALERTA_Grandes y negativos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "480fa7d2-919e-45df-913c-80f19f2f8dc5",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "YvoV8L3jAJzvBWcN",
+  "tags": []
+}
