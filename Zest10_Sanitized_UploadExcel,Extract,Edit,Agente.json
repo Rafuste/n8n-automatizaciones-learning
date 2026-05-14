@@ -1,0 +1,294 @@
+{
+  "name": "Zest10_UploadExcel,Extract,Edit,Agente (sanitized)",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "archivo",
+        "options": {}
+      },
+      "id": "bd575866-dfd6-4c6d-b76a-f50c98977508",
+      "name": "Extract from XLSX",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Subir Archivo Excel",
+        "formDescription": "Por favor, sube tu archivo de reporte de ventas en formato Excel (.xlsx)",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Archivo Excel",
+              "fieldType": "file",
+              "fieldName": "archivo",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx,.xls",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a7264486-0f1b-4e66-a28a-9d3d9f973c59",
+      "name": "Upload File Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        240,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d3ab5436-f425-49a1-9861-46d2d1757ca1",
+              "name": "Región",
+              "value": "={{ $json['Región'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6d4819af-25c3-4d3f-868f-e38f9a4f7484",
+              "name": "Total_Ventas",
+              "value": "={{ $json.Unidades * $json['Precio Unitario (€)'] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        304
+      ],
+      "id": "f03e0c40-6dec-416c-b564-18269153800c",
+      "name": "Crear Total_ventas (1)"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Total_Ventas"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Región",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        304
+      ],
+      "id": "23de2de8-28e4-45b8-b9bf-a8058b092eff",
+      "name": "Sum por región"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d8e53eb-e4d8-4822-b931-9c230dbe5096",
+              "name": "Región",
+              "value": "={{ $json['Región'] }}",
+              "type": "string"
+            },
+            {
+              "id": "dda92893-c1ae-406b-a870-dc9fc41deb02",
+              "name": "Total_Ventas_por_Region(€)",
+              "value": "={{ $json.sum_Total_Ventas }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        304
+      ],
+      "id": "c8710ff8-58ca-4512-affc-dadafbeadb9d",
+      "name": "Ordenar Columna"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Quiero que analices los datos de ventas por regiones que te envío en y me hagas un análisis sobre las regiones y las ventas que tienen cada una, me digas en qué zonas hay que mejorar. Aquí tienes la info: {{ $json.mensaje }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1552,
+        304
+      ],
+      "id": "46a50009-c63e-44e5-81a0-ce3802774982",
+      "name": "AI Agent",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        304
+      ],
+      "id": "541d63c7-07cf-41d3-a568-3e24df72e3ed",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        512
+      ],
+      "id": "d209220e-9659-4a1e-9c56-51e86fb87caa",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combina todos los items en uno solo con un mensaje concatenado\nreturn [{\n  json: {\n    mensaje: $input.all().map(item => `En la región ${item.json['Región']}, el total de ventas es ${item.json['Total_Ventas_por_Region(€)']} €`).join(', ')\n  }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        304
+      ],
+      "id": "4e7e28c8-5025-4c5b-956f-b22b63341397",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Upload File Form": {
+      "main": [
+        [
+          {
+            "node": "Extract from XLSX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from XLSX": {
+      "main": [
+        [
+          {
+            "node": "Crear Total_ventas (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Total_ventas (1)": {
+      "main": [
+        [
+          {
+            "node": "Sum por región",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sum por región": {
+      "main": [
+        [
+          {
+            "node": "Ordenar Columna",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ordenar Columna": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "559c1be1-5df0-464d-af9f-6f408ca2ece8",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "kQxGTVij8P5cYpOE",
+  "tags": []
+}
