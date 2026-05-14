@@ -67,7 +67,7 @@
                     "rightValue": 1000,
                     "operator": {
                       "type": "number",
-                      "operation": "equals"
+                      "operation": "gt"
                     },
                     "id": "afe42396-c002-469d-a92a-33c5e8a4097c"
                   }
@@ -124,6 +124,31 @@
               },
               "renameOutput": true,
               "outputKey": "ALERTA_Scam"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "11766c11-e7e0-4ab7-b28e-58bf1dac9293",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "RESTO"
             }
           ]
         },
@@ -170,6 +195,17 @@
       ],
       "id": "723ea0ce-bc04-4a70-9d88-eeafc07e0c63",
       "name": "Alerta Scam"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        336
+      ],
+      "id": "85f856c6-28a9-4846-970e-3ca52b8ae0a4",
+      "name": "No Operation, do nothing"
     }
   ],
   "pinData": {},
@@ -230,6 +266,13 @@
             "index": 0
           }
         ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [],
         [],
         [],
@@ -253,7 +296,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "480fa7d2-919e-45df-913c-80f19f2f8dc5",
+  "versionId": "3df48521-66ef-47bd-b541-7644182c6782",
   "meta": {
     "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
   },
