@@ -1,0 +1,134 @@
+{
+  "name": "Zest11_API Weather",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9764f270-1339-4e71-aa1b-8a7f083d3765",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "81a1adc4-ea52-47c9-a7ed-da582af57c2d",
+              "name": "Ciudad",
+              "value": "Zaragoza",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "515fc986-7c6c-4b24-91b2-e6d6c03af4b7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.Ciudad }}"
+            },
+            {
+              "name": "appid",
+              "value": "c42d3c02f4285b046447a870401027d2"
+            },
+            {
+              "name": "units",
+              "value": "metric"
+            },
+            {
+              "name": "lang",
+              "value": "es"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "119be48e-71ca-46e6-8699-a2f57e17df13",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        688,
+        0
+      ],
+      "id": "4fe9950e-ca9e-4ad7-8b28-88bcbe91e786",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2371dc68-bb04-4188-9d1b-8a1983c20cd9",
+  "meta": {
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "sNHHsYg1TWahRkgo",
+  "tags": []
+}
