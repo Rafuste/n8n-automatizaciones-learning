@@ -1,0 +1,236 @@
+{
+  "name": "Zest12_API Universidades,Form",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=http://universities.hipolabs.com/search?country={{ $json['Que pais?'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "57fc38b2-9a93-4eef-802d-fb1c07d6c44f",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "formTitle": "Filtro Universidades",
+        "formDescription": "Dime qué pais elegimos",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Que pais?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "spain"
+                  },
+                  {
+                    "option": "france"
+                  },
+                  {
+                    "option": "portugal"
+                  },
+                  {
+                    "option": "brazil"
+                  },
+                  {
+                    "option": "palestine"
+                  },
+                  {
+                    "option": "mexico"
+                  },
+                  {
+                    "option": "india"
+                  },
+                  {
+                    "option": "chile"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f2ec3d90-d1bf-4e99-8e2a-409fd8ccf240",
+      "name": "On form submission",
+      "webhookId": "1eb11375-5e8d-47a0-8a4f-f10776bb7a92"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Buscar en el nombre de las universidad",
+              "fieldName": "FiltroNombre"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        608,
+        160
+      ],
+      "id": "331cb4e9-311f-40bf-b508-2c59e7c44f3a",
+      "name": "Form",
+      "webhookId": "a96f9a5c-27f5-4a6d-8c23-b1176d9bde7d"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "7f23465a-eba6-46cc-9ed2-d3034474921f",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7b486c66-2ec3-4be7-906a-bfa79a5a5bd7",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "={{ $json.FiltroNombre }}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        0
+      ],
+      "id": "344dee10-0297-4bef-b6b4-3dad4a467298",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Universidades filtradas",
+        "completionMessage": "=Las universidades de {{ $json.country }}  cuyo nombre contiene {{ $json.FiltroNombre }} son:\\n\\n{{ $input.all().map(item => item.json.name).join('\\n') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "340a8486-6653-4a51-b8a8-a1c4b933c19b",
+      "name": "Form1",
+      "webhookId": "0759312e-99e3-4f98-89dd-3eafa17be560"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Form1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1cf06647-9cf7-4537-a72c-d01916bbfab7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a4f3e6be1e358ce8837367c60d3252ae4a7121786bb3cdfb5c695b323c782e5"
+  },
+  "id": "iTs0PaBOdKaX4MMH",
+  "tags": []
+}
