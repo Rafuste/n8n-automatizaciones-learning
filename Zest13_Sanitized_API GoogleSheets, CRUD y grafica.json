@@ -1,0 +1,1934 @@
+{
+  "name": "Zest13_API GoogleSheets, CRUD y grafica_Sanitizado",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.newID }}",
+            "nombre": "={{ $('POST - On form').item.json.nombre }}",
+            "valor": "={{ $('POST - On form').item.json['valor (potencia producida)'] }}",
+            "timestamp": "={{ $('POST - On form').item.json.Fecha }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        0
+      ],
+      "id": "7e486115-1df1-4609-9014-0ce91df9049a",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c4fb9b90-0f0f-46fd-abe9-cc925cfa95bc",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst maxId = Math.max(...items.map((item) => item?.json?.id));\nconst newID = maxId + 1;\n\nreturn { newID };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "d06bfbbd-abc2-43e9-811b-b549b2f53eda",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "formTitle": "Nuevos datos",
+        "formDescription": "Dame los datos diarios de energia producida",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "nombre",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Panel 1"
+                  },
+                  {
+                    "option": "Panel 2"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "valor (potencia producida)",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Fecha",
+              "fieldType": "date",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "81a23dd5-fe05-4581-aaa4-7066237d5370",
+      "name": "POST - On form",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Cómo quieres filtrar?'] }}",
+                    "rightValue": "Rango de fechas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b6fdc220-8a50-4a05-b25b-0074486935c7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fechas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "00fe3359-98a4-4df9-ba37-cb92a7410364",
+                    "leftValue": "={{ $json['Cómo quieres filtrar?'] }}",
+                    "rightValue": "Id concreto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ID"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "760e6a02-edcd-46b8-9e96-28903774ab89",
+                    "leftValue": "={{ $json['Cómo quieres filtrar?'] }}",
+                    "rightValue": "Rango de producción",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Producción"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d197596c-2827-4f48-aaa2-83e004b1f117",
+                    "leftValue": "={{ $json['Cómo quieres filtrar?'] }}",
+                    "rightValue": "Todas las filas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Todo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9abfe62d-2641-4a4d-a8be-51a4919824b0",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Error"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        416
+      ],
+      "id": "83416522-bb77-4717-9fd3-61a1e5372bea",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Fecha desde",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Fecha hasta",
+              "fieldType": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        176
+      ],
+      "id": "a5e680b8-7186-45d1-91b4-d7c38ebec313",
+      "name": "Form Fechas",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "ID",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        352
+      ],
+      "id": "c20903b5-e75e-4f60-ab1f-dc1de339bbe3",
+      "name": "Form ID",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Producción mínima",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Producción máxima",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        544
+      ],
+      "id": "22e62c7e-6af4-40bc-82f3-42c33f24d646",
+      "name": "Form Producción",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "ERROR",
+        "completionMessage": "NO ELEGISTE NADA CORRECTO. FREE PALESTINE!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        848
+      ],
+      "id": "12536458-5ae2-4aa3-ac99-cf5dcdeaee7b",
+      "name": "Form",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "id",
+              "lookupValue": "={{ $json.ID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        352
+      ],
+      "id": "3277a814-216a-4411-983d-0fd60c982b02",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        176
+      ],
+      "id": "12afdddf-2de4-437d-9aae-dec8f6a5afcb",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "155d611a-a308-4713-8023-dde4c02fad77",
+              "leftValue": "={{ $json.timestamp }}",
+              "rightValue": "={{ $('Form Fechas').item.json['Fecha desde'] }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            },
+            {
+              "id": "1209c0c9-5265-4547-b5be-2de699f7e017",
+              "leftValue": "={{ $json.timestamp }}",
+              "rightValue": "={{ $('Form Fechas').item.json['Fecha hasta'] }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        864,
+        176
+      ],
+      "id": "a33c2151-56b7-435a-afea-7c5525172b66",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        544
+      ],
+      "id": "b849ad33-416d-4bab-8ed2-1e0a727467ca",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "155d611a-a308-4713-8023-dde4c02fad77",
+              "leftValue": "={{ $json.valor }}",
+              "rightValue": "={{ $('Form Producción').item.json['Producción mínima'] }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "1209c0c9-5265-4547-b5be-2de699f7e017",
+              "leftValue": "={{ $json.valor }}",
+              "rightValue": "={{ $('Form Producción').item.json['Producción máxima'] }}",
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        864,
+        544
+      ],
+      "id": "f841e933-6e74-44ce-aad0-b5ef90420842",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        656,
+        736
+      ],
+      "id": "fdd85983-d299-4bc0-80af-4e075a4c7c49",
+      "name": "Get row(s) in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Seleccion",
+        "formDescription": "Seleccionemos datos",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Cómo quieres filtrar?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Id concreto"
+                  },
+                  {
+                    "option": "Rango de fechas"
+                  },
+                  {
+                    "option": "Rango de producción"
+                  },
+                  {
+                    "option": "Todas las filas"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        464
+      ],
+      "id": "af0e6de7-3de2-459d-bf5e-531469d978f3",
+      "name": "GET - On form",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Cómo quieres elegir?'] }}",
+                    "rightValue": "Por Fecha",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b6fdc220-8a50-4a05-b25b-0074486935c7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fecha"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "00fe3359-98a4-4df9-ba37-cb92a7410364",
+                    "leftValue": "={{ $json['Cómo quieres elegir?'] }}",
+                    "rightValue": "=Por ID",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ID"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9abfe62d-2641-4a4d-a8be-51a4919824b0",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Error"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        1232
+      ],
+      "id": "74b25e36-c1c3-4222-a1f4-286fefe78694",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Fecha a cambiar",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Nueva Producción",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        1040
+      ],
+      "id": "83c98644-1baf-45d1-bf50-cc7dd9ae6abc",
+      "name": "Form Fechas1",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "A qué ID quieres cambiarle la producción?",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Nueva producción",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        1232
+      ],
+      "id": "2a5e8595-4c8c-4b2f-a0e7-1ccb7609695c",
+      "name": "Form ID1",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "ERROR",
+        "completionMessage": "NO ELEGISTE NADA CORRECTO. FREE PALESTINE!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        1440
+      ],
+      "id": "a6feecb1-667b-4e0a-82d3-178dd9314e1a",
+      "name": "Form1",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "formTitle": "Seleccion",
+        "formDescription": "Editemos fila",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Cómo quieres elegir?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Por ID"
+                  },
+                  {
+                    "option": "Por Fecha"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        1248
+      ],
+      "id": "7a03f489-5fda-411a-8bfb-43232fe31888",
+      "name": "UPDATE - On form",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json['Fecha a cambiar'] }}",
+            "valor": "={{ $json['Nueva Producción'] }}"
+          },
+          "matchingColumns": [
+            "timestamp"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        1040
+      ],
+      "id": "dc5f5f8e-fc34-4de5-afef-0771daf5e426",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "valor": "={{ $('Form ID1').item.json['Nueva producción'] }}",
+            "id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        1232
+      ],
+      "id": "fc08eda3-5518-4849-994f-ebabfd6b4f71",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "id",
+              "lookupValue": "={{ $json['A qué ID quieres cambiarle la producción?'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        1232
+      ],
+      "id": "de3807ef-a10e-4449-bddf-8fb65dfdd997",
+      "name": "Get row(s) in sheet5",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Cómo quieres elegir?'] }}",
+                    "rightValue": "Por Fecha",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b6fdc220-8a50-4a05-b25b-0074486935c7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fecha"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "00fe3359-98a4-4df9-ba37-cb92a7410364",
+                    "leftValue": "={{ $json['Cómo quieres elegir?'] }}",
+                    "rightValue": "=Por ID",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ID"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9abfe62d-2641-4a4d-a8be-51a4919824b0",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Error"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        1888
+      ],
+      "id": "9d39a02a-6215-4380-a137-c34da06ec014",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Fecha a eliminar",
+              "fieldType": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        1696
+      ],
+      "id": "85be9948-e0f5-44a8-986f-c66d04a290c4",
+      "name": "Form Fechas2",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "ERROR",
+        "completionMessage": "NO ELEGISTE NADA CORRECTO. FREE PALESTINE!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        2096
+      ],
+      "id": "cdd31c7c-0d34-4161-9235-b7084a384174",
+      "name": "Form2",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "formTitle": "Seleccion",
+        "formDescription": "Editemos fila",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Cómo quieres elegir?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Por ID"
+                  },
+                  {
+                    "option": "Por Fecha"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        1904
+      ],
+      "id": "de816983-4481-44c4-8332-a4d02fda10a0",
+      "name": "DELETE - On form",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "timestamp",
+              "lookupValue": "={{ $json['Fecha a eliminar'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        1696
+      ],
+      "id": "b01f9f68-2ce3-4dc5-b407-5bbbe7088291",
+      "name": "Get row(s) in sheet7",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        1696
+      ],
+      "id": "2ba5c5fb-9332-406c-99a8-0ddfa83584f2",
+      "name": "Delete rows or columns from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "id",
+              "lookupValue": "={{ $json['ID a eliminar'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        1904
+      ],
+      "id": "8dba14bb-21cc-4047-a373-fe2ca5636228",
+      "name": "Get row(s) in sheet8",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        1904
+      ],
+      "id": "bdeddabf-fb0f-4ddf-9705-f90e4edd2be5",
+      "name": "Delete rows or columns from sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "ID a eliminar",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        416,
+        1904
+      ],
+      "id": "6d77b6e7-901b-4687-a0af-8abd97d3140f",
+      "name": "Form ID2",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "formTitle": "Dibujemos gráfica",
+        "formDescription": "Fechas para mostrar gráfica",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Fecha desde",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Fecha hasta",
+              "fieldType": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -32,
+        2512
+      ],
+      "id": "49ec5edb-b3b1-48e4-b2be-57dce665399f",
+      "name": "On form submission",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Producción_diaria_Panel1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        2480
+      ],
+      "id": "70238193-8b5b-4fe0-9342-8494be553f1d",
+      "name": "Get row(s) in sheet6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "<REDACTED>",
+          "name": "<REDACTED>"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "155d611a-a308-4713-8023-dde4c02fad77",
+              "leftValue": "={{ $json.timestamp }}",
+              "rightValue": "={{ $('On form submission').item.json['Fecha desde'] }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            },
+            {
+              "id": "1209c0c9-5265-4547-b5be-2de699f7e017",
+              "leftValue": "={{ $json.timestamp }}",
+              "rightValue": "={{ $('On form submission').item.json['Fecha hasta'] }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        2480
+      ],
+      "id": "981ded21-6d61-4f75-b004-fb58ce275b71",
+      "name": "Filter2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst labels = items.map((item) => item.json.timestamp);\nconst data = items.map((item) => item.json.valor);\n\nconst chartUrl = `https://quickchart.io/chart?c={type:'line',data:{labels:${JSON.stringify(labels)},datasets:[{data:${JSON.stringify(data)}}]}}`;\n\nreturn [{ json: { chartUrl }, pairedItem: items.map((_, index) => index) }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        2480
+      ],
+      "id": "33d880cc-d58c-428c-83f7-c37e33073d60",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "redirect",
+        "redirectUrl": "={{ $json.chartUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        912,
+        2480
+      ],
+      "id": "9809970e-a20d-4b6c-942e-615b4d94ed04",
+      "name": "Form3",
+      "webhookId": "<REDACTED>"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST - On form": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Form Fechas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form Producción",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form ID": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Fechas": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Producción": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET - On form": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Form Fechas1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form ID1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UPDATE - On form": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Fechas1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form ID1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet5": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Form Fechas2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form ID2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Fechas2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DELETE - On form": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet7": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet8": {
+      "main": [
+        [
+          {
+            "node": "Delete rows or columns from sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form ID2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet6": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Form3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1922b6a9-0327-4460-bf80-42cc6d5b54a2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "<REDACTED>"
+  },
+  "id": "ivni9exi0UP9ZrwJ",
+  "tags": []
+}
