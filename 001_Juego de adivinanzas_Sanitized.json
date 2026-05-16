@@ -1,0 +1,1089 @@
+{
+  "name": "001_Juego de adivinanzas",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "subject:Juego de adivinanzas"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        592,
+        384
+      ],
+      "id": "c0a41f68-220c-446f-ab56-347042fc3390",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Juego de adivinanzas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "email",
+              "lookupValue": "={{ $json.remitente }}"
+            },
+            {
+              "lookupColumn": "estado",
+              "lookupValue": "activo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        384
+      ],
+      "id": "cbaec725-c936-46ac-bb01-7c6b65220889",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": "<REDACTED>"
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "944dc2cf-f026-4f5e-bbd5-b96788840a7f",
+              "name": "remitente",
+              "value": "={{ $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "a977f1d2-bed1-4eda-aafd-1704334ab3f6",
+              "name": "cuerpo",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            },
+            {
+              "id": "b22af04d-8ae3-4928-a357-cdef84f4d012",
+              "name": "asunto",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        384
+      ],
+      "id": "f0ccd0c0-7a30-46fb-87e3-203ff9749b88",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2001d11c-ed46-4c67-8314-73fb722b66b2",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1312,
+        384
+      ],
+      "id": "eebf7eba-13ea-40ee-baf1-4d2509a1882c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres el presentador de un juego de adivinanzas. El jugador ha dicho: \"{{ $('Gmail Trigger').item.json.snippet }}\". \nSi el jugador acepta jugar(dice \"sí\", \"si\", \"vale\", \"ok\", \"jugar\"), entonces debes generar una palabra secreta (un objeto cotidiano, un animal, una fruta, etc.) y una pista inicial y responde con:\nResponde ÚNICAMENTE con un JSON en este formato:\n{\"accion\": \"nuevo_juego\", \"palabra\": \"la palabra secreta\", \"respuesta\": \"la pista inicial\"}\n\nSi el usuario no quiere jugar (dice \"no\", \"ahora no\", \"no quiero\"), responde:\n{\"accion\": \"cancelar\", \"respuesta\": \"Ok, cuando quieras jugar me avisas. VIVA PALESTINA LIBRE\"}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1504,
+        592
+      ],
+      "id": "45ea74dd-15b1-4a3f-a254-e041ea991504",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-pro-preview",
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1504,
+        768
+      ],
+      "id": "1dc35f4e-2b8f-432b-b0c1-b3bd03736191",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener la respuesta del AI Agent (debería ser un JSON string)\nconst respuestaRaw = $input.first().json.output; // o .output, depende de la versión. A veces la respuesta está en $json.response. Revisa ejecutando una vez.\n// Para evitar errores, primero haz un console.log para ver qué llega.\n// Por seguridad, intentamos parsear.\nlet respuesta;\ntry {\n  respuesta = JSON.parse(respuestaRaw);\n} catch(e) {\n  // Si no es JSON, devolvemos error\n  return [{ json: { error: \"El agente no devolvió JSON válido\", raw: respuestaRaw } }];\n}\nreturn [{ json: respuesta }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        592
+      ],
+      "id": "3c4c04d4-4539-4c1f-8bb6-3ab4ae2cd531",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "nuevo_juego",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e8a17f19-e8ff-45ed-9161-919da7208185"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Jugar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ef97cf35-24d8-4db1-9910-95cee8929d88",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "cancelar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cancelar"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2064,
+        592
+      ],
+      "id": "2f1c4fcb-35bd-4af7-b9ad-7ff98f9a6088",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Juego de adivinanzas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "palabra_secreta": "={{ $json.palabra }}",
+            "intentos": "1",
+            "estado": "activo",
+            "ultima_pista": "={{ $json.respuesta }}",
+            "pistas": "={{ $json.respuesta }}",
+            "email": "={{ $('Edit Fields').item.json.remitente }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "palabra_secreta",
+              "displayName": "palabra_secreta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pistas",
+              "displayName": "pistas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "intentos",
+              "displayName": "intentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultima_pista",
+              "displayName": "ultima_pista",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2272,
+        496
+      ],
+      "id": "4a7f77a1-2c93-4856-9875-cae6a803e4cb",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.remitente }}",
+        "subject": "RE: Juego de Adivinanzas",
+        "message": "={{ $json.respuesta }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2368,
+        688
+      ],
+      "id": "74075dc0-c3c2-45a7-be66-68c57e3ea95d",
+      "name": "Send a message",
+      "webhookId": "<REDACTED>",
+      "credentials": {
+        "gmailOAuth2": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener la fila de la partida\nconst fila = $input.first().json.row_number;\n// Obtener el cuerpo del correo desde el nodo 'Set' (ajusta el nombre si lo cambiaste)\nconst cuerpo = $('Edit Fields').first().json.cuerpo;\nconst remitente = $('Edit Fields').first().json.remitente;\n\n// Combinar\nreturn [{ json: { ...fila, cuerpo, remitente } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        64
+      ],
+      "id": "499e9f66-5259-494f-b6a3-88b35ad12c69",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=El jugador intenta adivinar. Palabra secreta: \"{{ $('Get row(s) in sheet').item.json.palabra_secreta }}\". Pistas anteriores: {{ $('Get row(s) in sheet').item.json.pistas }}. Intentos: {{ $('Get row(s) in sheet').item.json.intentos }}. El jugador dice: \"{{ $json.cuerpo }}\". \n\nDebes responder ÚNICAMENTE con un JSON:\n- Si el jugador acierta la palabra secreta (exacta o muy parecida): {\"acertado\": true, \"mensaje\": \"Felicidades, has adivinado! VIVA PALESTINA LIBRE!}\n- Si no acierta: {\"acertado\": false, \"mensaje\": \"No es correcto. Nueva pista: ...\", \"pista_nueva\": \"la pista\"}\n\nNo incluyas nada más fuera del JSON.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1792,
+        64
+      ],
+      "id": "288218bb-ef3d-4be3-bbf4-3f55e5bedd80",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1792,
+        240
+      ],
+      "id": "0a2a662f-f7c8-454b-bb80-53eebc4ddf28",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const respuestaRaw = $input.first().json.output;\nlet respuesta;\ntry {\n  respuesta = JSON.parse(respuestaRaw);\n} catch (e) {\n  respuesta = { acertado: false, mensaje: \"Error: la IA no respondió con JSON válido\", email:$('Edit Fields').first().json.remitente, palabra_secreta:$('Get row(s) in sheet').first().json.palabra_secreta};\n}\nreturn [{ json: respuesta }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        64
+      ],
+      "id": "e06705eb-7d90-4cda-b6d1-da5664c56097",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.acertado }}",
+                    "rightValue": false,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "5d5854f6-3ac8-4b0a-a7f2-989d84943005"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Acertado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "39fecde0-7957-43ee-913b-a8420de78cac",
+                    "leftValue": "={{ $json.acertado }}",
+                    "rightValue": false,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "No acertado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2704,
+        64
+      ],
+      "id": "a7dd4b31-9bd6-4657-a081-5bd3853cd25e",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Juego de adivinanzas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "estado": "terminado",
+            "row_number": "={{ $json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "palabra_secreta",
+              "displayName": "palabra_secreta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pistas",
+              "displayName": "pistas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "intentos",
+              "displayName": "intentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultima_pista",
+              "displayName": "ultima_pista",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2928,
+        -80
+      ],
+      "id": "65780cc0-22bd-4c29-9bcf-fd0e17434678",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Switch1').item.json.email }}",
+        "subject": "RE: Juego de Adivinanzas",
+        "message": "={{ $('Switch1').item.json.mensaje }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3408,
+        80
+      ],
+      "id": "e781e86c-e646-4e9e-b0e5-1658b4cd9eed",
+      "name": "Send a message1",
+      "webhookId": "<REDACTED>",
+      "credentials": {
+        "gmailOAuth2": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2448,
+        64
+      ],
+      "id": "00be81a5-2c51-4687-b7cb-dc79bf6cf99c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const currentClues = $(\"Get row(s) in sheet\").all()[0].json.pistas\n  ? JSON.parse($(\"Get row(s) in sheet\").all()[0].json.pistas)\n  : [];\nconst newClue = $input.all()[0].json.pista_nueva; // the new clue returned by the AI\ncurrentClues.push(newClue);\nconst newAttempts = $(\"Get row(s) in sheet\").all()[0].json.intentos + 1;\n\nreturn [\n  {\n    json: {\n      pistas_actualizado: JSON.stringify(currentClues),\n      intentos_actualizado: newAttempts,\n      ultima_pista_actualizado: newClue,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2912,
+        240
+      ],
+      "id": "76389a24-dbe5-4fdd-bb83-5ac0bd50a387",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "<REDACTED_DOCUMENT_ID>",
+          "mode": "list",
+          "cachedResultName": "Juego de adivinanzas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/<REDACTED_DOCUMENT_ID>/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Switch1').item.json.row_number }}",
+            "pistas": "={{ $json.pistas_actualizado }}",
+            "ultima_pista": "={{ $json.ultima_pista_actualizado }}",
+            "intentos": "={{ $json.intentos_actualizado }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "palabra_secreta",
+              "displayName": "palabra_secreta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pistas",
+              "displayName": "pistas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "intentos",
+              "displayName": "intentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultima_pista",
+              "displayName": "ultima_pista",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3120,
+        240
+      ],
+      "id": "55b9d50b-eda2-418f-be9a-e4aacb12ae68",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Iniciemos juego",
+        "formDescription": "Introduce a quien quieres que enviemos el juego",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Email para enviar juego",
+              "fieldType": "email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        688,
+        -16
+      ],
+      "id": "f70e57db-9964-4f4e-b205-837a824d5f74",
+      "name": "On form submission",
+      "webhookId": "<REDACTED>"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['Email para enviar juego'] }}",
+        "subject": "Juego de Adivinanzas",
+        "message": "Holii! Soy Edu, he estado desarrollando un jueguito de adivinanzas para aprender automatizaciones con Agentes IA. Quieres que juguemos? Tendrás que adivinar una palabra basandote en pistas.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        -16
+      ],
+      "id": "8206b74d-5131-486a-ba82-6d83674948e6",
+      "name": "Send a message2",
+      "webhookId": "<REDACTED>",
+      "credentials": {
+        "gmailOAuth2": "<REDACTED>"
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.remitente }}",
+        "subject": "RE: Juego de Adivinanzas",
+        "message": "={{ $json.ultima_pista }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2544,
+        464
+      ],
+      "id": "1cdd4ea5-2b79-4a0d-9a93-a4b9ec9c7140",
+      "name": "Send a message3",
+      "webhookId": "<REDACTED>",
+      "credentials": {
+        "gmailOAuth2": "<REDACTED>"
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a1d3e4b2-7067-4699-95d4-8558fc582692",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "<REDACTED>"
+  },
+  "id": "s4KxbmoclUeK2LoS",
+  "tags": []
+}
